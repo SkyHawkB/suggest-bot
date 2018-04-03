@@ -3,6 +3,14 @@ const client = new Discord.Client();
 const fs = require('fs');
 const stringify = require('pretty-json-stringify');
 const globalConfig = require('./config/global/settings.json');
+
+const onOwnMessage = (message) => {
+  if(message.embeds.length == 0) return;
+  if(message.embeds[0].fields.length != 1) return;
+
+  message.react('✖');
+  message.react('✔');
+};
 const getConfig = (message) => {
   return require(`./config/perguild/${message.guild.id}.json`);
 };
@@ -43,7 +51,7 @@ client.once('ready', () => {
           shouldExpand: (object, level, key) => {
             return true;
           },
-          spaceBeforeColon: ""
+          spaceBeforeColon: ''
         }
       );
 
@@ -53,8 +61,10 @@ client.once('ready', () => {
   });
 });
 client.on('message', (message) => {
+  if(message.author.id == client.user.id) return onOwnMessage(message);
+
   if(message.author.bot) return;
-  if(!message.guild) return;
+  if(!message.guild) return message.channel.send('You must be in a server to use commands!');
   if(message.content.indexOf(getPrefix(message)) !== 0) return;
 
   const args = message.content.slice(getPrefix(message).length).trim().split(/ +/g);
@@ -85,7 +95,7 @@ client.on('guildCreate', (guild) => {
       shouldExpand: (object, level, key) => {
         return true;
       },
-      spaceBeforeColon: ""
+      spaceBeforeColon: ''
     }
   );
 

@@ -1,6 +1,4 @@
 {
-  "channel": {
-    "name": "NONE"
-  },
+  "channelID": null,
   "prefix": ">"
 }
